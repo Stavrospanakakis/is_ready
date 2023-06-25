@@ -56,11 +56,11 @@ pub async fn run() -> Result<(), &'static str> {
         timeout(my_duration, wait_for(args.addresses)).await
     });
 
-    if let Err(_) = thread.join().unwrap().await {
+    if thread.join().unwrap().await.is_err() {
         return Err("Connection timeout, could not connect to the addresses.");
     }
 
-    Command::new(args.cmd[0].to_string())
+    Command::new(&args.cmd[0])
         .args(&args.cmd[1..])
         .spawn()
         .expect("Failed to run the command.");

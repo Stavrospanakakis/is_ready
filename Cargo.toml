@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.3.8", features = ["derive"] }
-tokio = { version = "1.28.2", features = ["full"] }
+tokio = { version = "1.29.1", features = ["full"] }
 
 [profile.release]
 opt-level = 'z'   # Optimize for size

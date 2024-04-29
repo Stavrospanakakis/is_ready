@@ -31,6 +31,7 @@ Arguments:
 Options:
   -t, --timeout <TIMEOUT>  [default: 30]
   -a, --addr <ADDRESS>
+  -q, --quiet              Suppress output
   -h, --help               Print help
   -V, --version            Print version
 

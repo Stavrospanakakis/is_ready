@@ -21,20 +21,27 @@ struct Args {
         value_name = "COMMAND"
     )]
     cmd: Vec<String>,
+
+    #[arg(short = 'q', long)]
+    quiet: bool,
 }
 
-async fn wait_for(addresses: Vec<String>) {
+async fn wait_for(addresses: Vec<String>, quiet: bool) {
     let mut threads = Vec::new();
     for address in addresses {
         let thread = tokio::spawn(async move {
             loop {
                 match TcpStream::connect(&address) {
                     Ok(_) => {
-                        println!("Connected to {} successfully", address);
+                        if !quiet {
+                            println!("Connected to {} successfully", address);
+                        }
                         break;
                     }
                     Err(_) => {
-                        println!("Waiting for {}", address)
+                        if !quiet {
+                            println!("Waiting for {}", address)
+                        }
                     }
                 }
                 tokio::time::sleep(Duration::from_millis(500)).await;
@@ -53,7 +60,7 @@ pub async fn run() -> Result<(), &'static str> {
 
     let thread = thread::spawn(move || async move {
         let my_duration = tokio::time::Duration::from_secs(args.timeout);
-        timeout(my_duration, wait_for(args.addresses)).await
+        timeout(my_duration, wait_for(args.addresses, args.quiet)).await
     });
 
     if thread.join().unwrap().await.is_err() {

@@ -55,7 +55,16 @@ async fn wait_for(addresses: Vec<String>, quiet: bool) {
     }
 }
 
-pub async fn run() -> Result<(), &'static str> {
+fn exec_command(command: &str, args: &[String]) -> Result<(), String> {
+    if Command::new(command).args(args).spawn().is_err() {
+        let err = format!("Command not found: {}", command);
+        return Err(err);
+    }
+
+    Ok(())
+}
+
+pub async fn run() -> Result<(), String> {
     let args = Args::parse();
 
     let thread = thread::spawn(move || async move {
@@ -64,13 +73,32 @@ pub async fn run() -> Result<(), &'static str> {
     });
 
     if thread.join().unwrap().await.is_err() {
-        return Err("Connection timeout, could not connect to the addresses.");
+        return Err(String::from(
+            "Connection timeout, could not connect to the addresses.",
+        ));
     }
 
-    Command::new(&args.cmd[0])
-        .args(&args.cmd[1..])
-        .spawn()
-        .expect("Failed to run the command.");
+    exec_command(&args.cmd[0], &args.cmd[1..])?;
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn command_not_found() {
+        let args = Args {
+            timeout: 30,
+            addresses: vec![String::from("google.com:80")],
+            cmd: vec![String::from("not_a_command")],
+            quiet: false,
+        };
+
+        assert_eq!(
+            exec_command(&args.cmd[0], &args.cmd[1..]),
+            Err(String::from("Command not found: not_a_command"))
+        );
+    }
 }

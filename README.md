@@ -56,7 +56,7 @@ Example using the Docker Image:
 
 ```Dockerfile
 # Set the version you want to download
-ARG IS_READY_VERSION=1.0.1
+ARG IS_READY_VERSION=1.0.2
 FROM ghcr.io/stavrospanakakis/is_ready:$IS_READY_VERSION AS is_ready
 
 FROM alpine:3.19
@@ -77,7 +77,7 @@ FROM alpine:3.19
 RUN apk add --no-cache curl
 
 # Set the version you want to download
-ENV IS_READY_VERSION=v1.0.1
+ENV IS_READY_VERSION=v1.0.2
 
 # Download the binary
 RUN curl -L https://github.com/Stavrospanakakis/is_ready/releases/download/${IS_READY_VERSION}/is_ready_${IS_READY_VERSION}_x86_64-unknown-linux-musl.tar.gz | tar xzf - -C /usr/local/bin
@@ -104,9 +104,9 @@ services:
 [`ghcr.io/stavrospanakakis/is_ready`](https://github.com/Stavrospanakakis/is_ready/pkgs/container/is_ready) image from GitHub Container Registry.
 
 ```
-$ VERSION=1.0.1
+$ VERSION=1.0.2
 $ docker run --rm ghcr.io/stavrospanakakis/is_ready:$VERSION --version
-is_ready 1.0.1
+is_ready 1.0.2
 ```
 
 ## License
